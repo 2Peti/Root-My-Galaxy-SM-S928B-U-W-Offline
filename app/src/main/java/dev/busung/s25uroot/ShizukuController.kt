@@ -7,6 +7,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 import moe.shizuku.server.IRemoteProcess
 import moe.shizuku.server.IShizukuService
 import rikka.shizuku.Shizuku
@@ -15,6 +16,7 @@ import kotlin.coroutines.resumeWithException
 
 object ShizukuController {
     private const val PERMISSION_REQUEST_CODE = 0x5352
+    private const val PERMISSION_TIMEOUT_MILLIS = 30_000L
 
     fun isRunning(): Boolean = try {
         Shizuku.pingBinder()
@@ -44,25 +46,27 @@ object ShizukuController {
     suspend fun requestPermission(): Boolean {
         if (isGranted()) return true
         if (!isRunning()) return false
-        return suspendCancellableCoroutine { continuation ->
-            lateinit var listener: Shizuku.OnRequestPermissionResultListener
-            listener = Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
-                if (requestCode == PERMISSION_REQUEST_CODE) {
+        return withTimeoutOrNull(PERMISSION_TIMEOUT_MILLIS) {
+            suspendCancellableCoroutine { continuation ->
+                lateinit var listener: Shizuku.OnRequestPermissionResultListener
+                listener = Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
+                    if (requestCode == PERMISSION_REQUEST_CODE) {
+                        Shizuku.removeRequestPermissionResultListener(listener)
+                        continuation.resume(grantResult == PackageManager.PERMISSION_GRANTED)
+                    }
+                }
+                Shizuku.addRequestPermissionResultListener(listener)
+                continuation.invokeOnCancellation {
                     Shizuku.removeRequestPermissionResultListener(listener)
-                    continuation.resume(grantResult == PackageManager.PERMISSION_GRANTED)
+                }
+                try {
+                    Shizuku.requestPermission(PERMISSION_REQUEST_CODE)
+                } catch (error: Throwable) {
+                    Shizuku.removeRequestPermissionResultListener(listener)
+                    continuation.resumeWithException(error)
                 }
             }
-            Shizuku.addRequestPermissionResultListener(listener)
-            continuation.invokeOnCancellation {
-                Shizuku.removeRequestPermissionResultListener(listener)
-            }
-            try {
-                Shizuku.requestPermission(PERMISSION_REQUEST_CODE)
-            } catch (error: Throwable) {
-                Shizuku.removeRequestPermissionResultListener(listener)
-                continuation.resumeWithException(error)
-            }
-        }
+        } ?: false
     }
 
     fun exec(cmd: Array<String>, env: Array<String>? = null, dir: String? = null): Process {
@@ -89,16 +93,17 @@ object ShizukuController {
 
     fun writeFile(remotePath: String, mode: String, source: InputStream) {
         // v0.2.29+: 写入后用 wc -c 校验大小，防止 Shizuku 管道截断产生坏文件
-        val process = exec(arrayOf("sh", "-c", "cat > '$remotePath' && chmod $mode '$remotePath' && wc -c < '$remotePath'"))
-        val exitCode = try {
+        val process = exec(arrayOf("sh", "-c", "exec 2>&1; id; ls -ld /data/local/tmp '$remotePath'; cat >| '$remotePath' && chmod $mode '$remotePath' && wc -c < '$remotePath'"))
+        try {
             process.outputStream.use { output ->
                 source.use { input -> input.copyTo(output, DEFAULT_BUFFER_SIZE) }
             }
-            process.waitFor()
+            val output = process.inputStream.bufferedReader().use { it.readText() }.trim()
+            val exitCode = process.waitFor()
+            check(exitCode == 0) { "Failed to stage $remotePath (exit $exitCode): $output" }
         } finally {
             if (process.isAlive) process.destroy()
         }
-        check(exitCode == 0) { "Failed to stage $remotePath (exit $exitCode)" }
     }
 
     private class RemoteProcess(private val remote: IRemoteProcess) : Process() {

@@ -1,22 +1,15 @@
-# Samsung KernelSU late-load builds
+# S928B KernelSU artifacts
 
-The files in this directory are built from KernelSU `v3.2.5`, commit
-`b0bc817b4e966aa6aa830834eaf6ef765d821d40`. They are not interchangeable
-between firmware releases.
+Only the SM-S928B DZF2 pair is bundled.
 
-## Bundled artifacts
+| File | Size | SHA-256 |
+| --- | ---: | --- |
+| `android14-6.1_kernelsu-e3q-S928BXXS6DZF2-kdp.ko` | 412,600 | `64b10f49cfd86a702c06b4bea80d3dea4a1a7d5cd4a1f2d1e7d45783a0c53625` |
+| `ksud-e3q-S928BXXS6DZF2-kdp` | 4,772,304 | `3edb768b549e5c92e9043cebdb0fffdd5b61dec42313571c3157e4078d65991b` |
 
-| File | Target | KMI | Size | SHA-256 |
-| --- | --- | --- | ---: | --- |
-| `android14-6.1_kernelsu-e3q-S928USQS6DZF2-kdp.ko` | `SM-S928U` / `SM-S928U1`, `S928USQS6DZF2` | `android14-6.1` | 400,152 | `ed7afea6cd221d5698739d3a1633264c084ffb77f2df730e5808941e0a555de5` |
-| `ksud-e3q-S928USQS6DZF2-kdp` | Same exact U/U1 DZF2 build | `android14-6.1` | 4,998,352 | `10c1bf87f8e475e6ab8c5d1c5a085aa1544ee091f4451ad65141ea75261ab610` |
-| `android14-6.1_kernelsu-e3q-S928BXXS6DZF2-kdp.ko` | `SM-S928B`, `S928BXXS6DZF2` | `android14-6.1` | 398,432 | `14f805c6a03123e84f10a252eb5b47f6c65c56c05ad4ccccf1f836c6867f64a9` |
-| `ksud-e3q-S928BXXS6DZF2-kdp` | Same exact S928B DZF2 build | `android14-6.1` | 4,748,232 | `43f451313dc111429187f8f93e76c57c42976323782aac936c1c09aa309b76b3` |
-
-The standalone `.ko` files are retained for auditing. The app late-loads the
-matching `ksud-*` binary because `ksud late-load` embeds the target
-`<kmi>_kernelsu.ko` asset.
-
-Do not reuse the U/U1 pair on `SM-S928B` or `SM-S928W`. W was recorded to
-panic when the U/U1 `ksud` live-patched text; it uses the S928B no-patch-text
-`ksud` instead. The U/U1 and B modules also have different vermagic strings.
+KernelSU v3.2.5, commit `b0bc817b4e966aa6aa830834eaf6ef765d821d40`, uses the
+Samsung KDP/RKP/DEFEX patch, JingMatrix's mount-hide commit
+[`80a3ab31`](https://github.com/JingMatrix/KernelSU/commit/80a3ab31eb108a5515ecaea0f4799a035b7d1ce1), and the Samsung SELinux Hide kretprobe fallback.
+Both features initialize enabled. SELinux Hide filters SELinuxFS query/status
+results; `/proc/self/attr/current` writes are unchanged. Hardware revalidation
+of this build remains pending.

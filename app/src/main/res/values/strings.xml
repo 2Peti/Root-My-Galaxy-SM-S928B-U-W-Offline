@@ -69,7 +69,7 @@
     <string name="about">About</string>
     <string name="about_title">About Root My Galaxy</string>
     <string name="about_description">About Root My Galaxy</string>
-    <string name="about_body">Offline Root My Galaxy pack for Galaxy S24 Ultra SM-S928U / SM-S928U1 / SM-S928W / SM-S928B on exact DZF2 firmware. Payloads are bundled in the APK.</string>
+    <string name="about_body">Offline Root My Galaxy pack for Galaxy S24 Ultra SM-S928B on exact S928BXXS6DZF2 firmware. Payloads are bundled in the APK.</string>
 
     <string name="install_title">Install</string>
     <string name="install_keep_open">Keep this screen open until installation finishes</string>
@@ -144,7 +144,7 @@
     <string name="shizuku_not_running_body">Start the Shizuku service with adb or root and grant this app permission, then enable this option.</string>
     <string name="action_download_shizuku">Download Shizuku</string>
     <string name="error_shizuku_unavailable">Shizuku is not running. Start Shizuku with adb or root first.</string>
-    <string name="error_shizuku_permission">Shizuku permission was not granted</string>
+    <string name="error_shizuku_permission">Shizuku permission request did not complete. Approve the Shizuku prompt and retry.</string>
     <string name="error_shizuku_stage">Unable to stage %1$s through Shizuku: %2$s</string>
     <string name="log_shizuku_prepare">[*] Preparing Shizuku execution</string>
     <string name="log_shizuku_permission">[+] Shizuku permission granted</string>

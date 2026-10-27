@@ -1,15 +1,8 @@
-# Support manifests
+# Offline payload manifest
 
-This offline pack ships three exact DZF2 profiles and does not download GitHub
-feeds at runtime.
+The offline APK bundles one exact target: `e3q-S928BXXS6DZF2` for
+`SM-S928B`, firmware `S928BXXS6DZF2`, kernel
+`6.1.145-android14-11-33419968-abS928BXXS6DZF2`.
 
-- `targets-v3.json` is the schema used by the bundled app.
-- `targets-v2.json` keeps the same two profiles in the older feed shape.
-
-The app copies `targets-v3.json` into `app/src/main/assets/targets-v3.json`.
-Artifact URLs use `asset://<profileId>/<file>` and are verified by size and
-SHA-256 before use.
-
-Do not add `SM-S928N`, `SM-S9280`, or any non-DZF2 build to these files
-without a separate firmware-specific audit. `SM-S928W` already has its own
-profile and must not be folded into the U/U1 entry.
+Both v2 and v3 manifests contain only this profile. Keep the payload IDs, asset
+paths, sizes, and SHA-256 values aligned with `app/src/main/assets`.

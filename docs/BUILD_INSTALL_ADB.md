@@ -1,98 +1,30 @@
-# Build, Install, And ADB
+# Build, install, and ADB — S928B only
 
-This page covers the local flow after the bundled files have been verified.
-
-## Build The Debug APK
-
-```sh
-./tools/prepare-s928-dzf2.sh --build-apk
-```
-
-APK output:
-
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-Manual Gradle build:
+## Build
 
 ```sh
 ./gradlew :app:assembleDebug
 ```
 
-Package identity:
+The output is `app/build/outputs/apk/debug/app-debug.apk`. It is a temporary
+build output. The published APK is attached to the GitHub Release.
 
-```text
-applicationId: io.github.fusiondrive.RMGs928offline
-versionName: 0.3.4-s928-dzf2-offline
-```
+Package identity: `io.github.fusiondrive.RMGs928offline`.
 
-This is distinct from official Root My Galaxy (`dev.busung.s25uroot`) and
-from the S918B offline app (`io.github.rootmygalaxy.s23ultra`).
-
-## Install The APK
+## Install for one Android user
 
 ```sh
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install --user 0 -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Or let the script build and install:
+This command updates user 0 only. It does not start the app.
+
+## Verify the connected device
 
 ```sh
-./tools/prepare-s928-dzf2.sh --build-apk --install-apk
+adb shell 'getprop ro.product.model; getprop ro.build.display.id; uname -r'
 ```
 
-## Stage Files With ADB
-
-```sh
-./tools/prepare-s928-dzf2.sh --stage-adb
-```
-
-The script reads the connected device model and stages the matching pair:
-
-```text
-/data/local/tmp/rmg-s928/<profile>/cve-2026-43499-app.so
-/data/local/tmp/rmg-s928/<profile>/ksud
-/data/local/tmp/libcve43499root
-/data/local/tmp/ksud-s25u-kdp
-/data/local/tmp/ksud-selected
-```
-
-## Full Local Flow
-
-```sh
-./tools/prepare-s928-dzf2.sh --all
-```
-
-This does:
-
-```text
-1. Verify bundled hashes.
-2. Refresh app assets.
-3. Build the debug APK.
-4. Install the APK if a device is connected.
-5. Stage the matching payload/helper/ksud files.
-6. Print the manual ADB command.
-```
-
-## Manual ADB Test Commands
-
-Clear a stale previous attempt:
-
-```sh
-adb shell rm -f /data/local/tmp/ksu-payload
-```
-
-Read the identity the pack will match:
-
-```sh
-adb shell 'getprop ro.product.model; getprop ro.build.display.id; getprop ro.build.fingerprint; uname -r'
-```
-
-The script prints the payload path for the connected model. It does not open a
-root shell automatically.
-
-## Notes
-
-Use Shizuku. The S928B validation record and later public testers both needed
-`uid=2000` / `u:r:shell:s0`. A normal untrusted_app run can reboot or fail.
+Expected model, firmware, and kernel are listed in [TARGET.md](TARGET.md).
+Use Shizuku for the install flow. The app removes staged temporary files when
+each attempt ends.

@@ -144,8 +144,11 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                     if (!ShizukuController.isRunning() && !ShizukuController.pingUntilRunning()) {
                         error(app.getString(R.string.error_shizuku_unavailable))
                     }
-                    if (!ShizukuController.isGranted() && !ShizukuController.requestPermission()) {
-                        error(app.getString(R.string.error_shizuku_permission))
+                    if (!ShizukuController.isGranted()) {
+                        appendLog("[*] Waiting for Shizuku permission")
+                        if (!ShizukuController.requestPermission()) {
+                            error(app.getString(R.string.error_shizuku_permission))
+                        }
                     }
                     appendLog(app.getString(R.string.log_shizuku_permission))
                 }
@@ -175,7 +178,30 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 appendLog("[-] ${error.message ?: error.javaClass.simpleName}")
                 setPhase(InstallPhase.Failed, app.getString(R.string.status_install_failed))
                 finishHistory(InstallRunResult.Failed)
+            } finally {
+                cleanupStagedRootArtifacts()
             }
+        }
+    }
+
+    private fun cleanupStagedRootArtifacts() {
+        val paths = arrayOf(
+            SHIZUKU_HELPER_PATH,
+            SHIZUKU_PAYLOAD_PATH,
+            SHIZUKU_KSUD_PATH,
+            SHIZUKU_KSUD_STAGE_PATH,
+            SHIZUKU_KSUD_SELECTED_PATH,
+        )
+        try {
+            val exitCode = if (shizukuEnabled()) {
+                ShizukuController.exec(arrayOf("/system/bin/rm", "-f") + paths).waitFor()
+            } else {
+                val command = "/system/bin/rm -f ${paths.joinToString(" ", transform = ::shellQuote)}"
+                runHelper("-c", command).code
+            }
+            if (exitCode != 0) appendLog("[!] Temporary root file cleanup failed: exit=$exitCode")
+        } catch (error: Throwable) {
+            appendLog("[!] Temporary root file cleanup failed: ${error.message}")
         }
     }
 
@@ -326,7 +352,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             // Public helper bind-mounts KSU_LOADER_PATH=/data/local/tmp/ksud-s25u-kdp
             // onto /system/bin/logcat. Also keep ksud-selected for older helpers.
             shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_PATH, "755")
-            shizukuStage(payloads.kernelSu, "/data/local/tmp/ksud-selected", "755")
+            shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_SELECTED_PATH, "755")
             shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_STAGE_PATH, "755")
             appendLog(app.getString(R.string.log_ksu_staged))
         } else {
@@ -426,10 +452,10 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
     private fun shizukuStage(source: File, target: String, mode: String): File {
         val staged = File(target)
-        // v0.2.29+: 不再复用旧文件（长度相同但内容可能损坏——bad ELF magic bug）。
-        // 总是先删除再写入，确保 /data/local/tmp 下是完整的新 payload。
+        // Clear stale files or directories before writing the staged artifact.
         try {
-            ShizukuController.exec(arrayOf("rm", "-f", target)).waitFor()
+            val cleanup = ShizukuController.exec(arrayOf("rm", "-rf", target))
+            check(cleanup.waitFor() == 0) { "Failed to clear stale staging path $target" }
             ShizukuController.writeFile(target, mode, source.inputStream())
             // 写后验证：读回前 4 字节必须是 ELF magic (0x7f 'E' 'L' 'F')
             val magic = ShizukuController.capture(arrayOf("sh", "-c", "head -c 4 '$target' | od -An -tx1 | tr -d ' \\n'"))
@@ -550,6 +576,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private const val SHIZUKU_PAYLOAD_PATH = "/data/local/tmp/ksu-payload"
         private const val SHIZUKU_KSUD_PATH = "/data/local/tmp/ksud-s25u-kdp"
         private const val SHIZUKU_KSUD_STAGE_PATH = "/data/local/tmp/.ksud-stage"
+        private const val SHIZUKU_KSUD_SELECTED_PATH = "/data/local/tmp/ksud-selected"
         private val LOG_POLL_INTERVAL = 250.milliseconds
         private val SHIZUKU_LOG_POLL_INTERVAL = 1.seconds
         private val ANSI_ESCAPE = Regex("\u001B\\[[0-?]*[ -/]*[@-~]")

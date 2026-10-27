@@ -1,167 +1,48 @@
-# Root My Galaxy SM-S928B/U/W Offline
+# Root My Galaxy Offline — SM-S928B DZF2
 
-Offline Root My Galaxy workspace for Galaxy S24 Ultra `e3q` on exact DZF2
-firmware. One APK bundles three independently audited targets:
+This offline app supports only the Samsung Galaxy S24 Ultra
+`SM-S928B` on firmware `S928BXXS6DZF2` and kernel
+`6.1.145-android14-11-33419968-abS928BXXS6DZF2`.
+It rejects other models, firmware, and kernel releases.
 
-| Model | Firmware | Kernel | Profile |
-| --- | --- | --- | --- |
-| `SM-S928U` / `SM-S928U1` | `S928U1UES6DZF2` / `S928USQS6DZF2` | `6.1.145-android14-11-33419968-abS928USQS6DZF2` | `e3q-S928USQS6DZF2` |
-| `SM-S928W` | `S928WVLS6DZF2` | `6.1.145-android14-11-33419968-abS928USQS6DZF2` | `e3q-S928W-S928USQS6DZF2` |
-| `SM-S928B` | `S928BXXS6DZF2` | `6.1.145-android14-11-33419968-abS928BXXS6DZF2` | `e3q-S928BXXS6DZF2` |
+The APK bundles the S928B exploit payload and matching KernelSU `ksud`. Root is
+per-boot; a reboot requires another install run. Use Shizuku and grant its
+permission before starting Root My Galaxy. Keep Android child-process
+restrictions disabled for Shizuku.
 
-This repository keeps the public-source payload tree, the offline Android app,
-target manifests, KernelSU pairs, and the helper scripts needed to reproduce
-the pack. Use it only on devices you own or are explicitly authorized to test.
+The app removes its staged helper, exploit payload, and `ksud` copies after
+each install attempt. KernelSU Mount Hide filters proc mount-table views; it
+does not hide ordinary files. SELinux Hide starts enabled but does not filter
+`/proc/self/attr/current` writes.
 
-The app does not download payloads from GitHub. Matching is exact: model plus
-kernel `6.1.145` plus the DZF2 kernel release and build token. `SM-S928N`,
-`SM-S9280`, and any non-DZF2 build are rejected. `SM-S928W` is its own
-profile; it does not reuse the U/U1 payload or `ksud`.
+## Download and build
 
-## Screenshots
-
-These screenshots come from the validated DZF2 devices. Root is per-boot.
-No boot image is modified, so reboot survival is not claimed.
-
-<table>
-  <tr>
-    <td align="center"><strong>SM-S928U1 Root My Galaxy</strong></td>
-    <td align="center"><strong>SM-S928U1 KernelSU</strong></td>
-    <td align="center"><strong>SM-S928W KernelSU</strong></td>
-    <td align="center"><strong>SM-S928B KernelSU</strong></td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="docs/assets/screenshots/s928u1-root-my-galaxy.jpg" alt="Root My Galaxy showing KernelSU active on SM-S928U1" width="180">
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/s928u1-kernelsu.jpg" alt="KernelSU Manager on SM-S928U1 DZF2" width="180">
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/s928w-kernelsu.jpg" alt="KernelSU Manager on SM-S928W DZF2" width="180">
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/s928b-kernelsu.png" alt="KernelSU Manager on SM-S928B DZF2" width="180">
-    </td>
-  </tr>
-</table>
-
-## Validated Targets
-
-```text
-model: SM-S928U1
-device: e3q
-build display: BP4A.251205.006.S928U1UES6DZF2
-fingerprint: samsung/e3quew/e3q:16/BP4A.251205.006/S928U1UES6DZF2:user/release-keys
-kernel release: 6.1.145-android14-11-33419968-abS928USQS6DZF2
-
-model: SM-S928W
-device: e3q
-product: e3qcsx
-build display: BP4A.251205.006.S928WVLS6DZF2
-fingerprint: samsung/e3qcsx/e3q:16/BP4A.251205.006/S928WVLS6DZF2:user/release-keys
-kernel release: 6.1.145-android14-11-33419968-abS928USQS6DZF2
-
-model: SM-S928B
-device: e3q
-build display: BP4A.251205.006.S928BXXS6DZF2
-fingerprint: samsung/e3qxxx/e3q:16/BP4A.251205.006/S928BXXS6DZF2:user/release-keys
-kernel release: 6.1.145-android14-11-33419968-abS928BXXS6DZF2
-```
-
-U/U1 and W share the US DZF2 kernel banner, but W is still a separate port:
-bucket `28` / one bank slot, and the S928B no-patch-text `ksud`. S928B keeps
-its own kernel vermagic and `SLIDE_NFULNL_LOGGER_OFF` (`0x016a622a` vs
-`0x016a61b8` on U/U1 and W). Do not swap the three payloads or the U `ksud`.
-
-## Prerequisites
-
-1. **Enable Developer options and USB debugging**.
-2. **Enable "Disable child process restrictions"** in Developer options.
-   Shizuku needs this to spawn the helper processes.
-3. **Install [Shizuku](https://shizuku.rikka.app/).** These ports were validated
-   in Shizuku mode (`uid=2000`, `u:r:shell:s0`, `Seccomp=0`).
-4. **Reboot the phone.**
-5. **Close every other app.** Keep only Shizuku and Root My Galaxy running.
-6. **Start Shizuku**, then open Root My Galaxy and grant permission.
-7. If a previous attempt left a stale file, remove it before retrying:
+Download the current APK from the
+[GitHub release](https://github.com/fusiondrive/Root-My-Galaxy-SM-S928B-U-W-Offline/releases/latest).
+The release page includes its SHA-256 manifest. To build locally:
 
 ```sh
-adb shell rm -f /data/local/tmp/ksu-payload
+./gradlew :app:assembleDebug
 ```
 
-The method is per-boot. A reboot drops KernelSU until you run the app again.
+The APK is a release asset. Do not commit APKs, `app/build/`, or `app/.cxx/`.
+The ADB helper installs only for Android user 0 and never starts the app.
+
+## Attribution
+
+This is an offline adaptation of
+[Root My Galaxy by BuSung-dev](https://github.com/BuSung-dev/Root-My-Galaxy),
+packaged by FusionDrive. The exploit port credits
+[NebuSec/CyberMeowfia](https://github.com/NebuSec/CyberMeowfia/tree/main/IonStack/CVE-2026-43499/exploit).
+The KernelSU mount-hide feature derives from
+[JingMatrix's commit `80a3ab31`](https://github.com/JingMatrix/KernelSU/commit/80a3ab31eb108a5515ecaea0f4799a035b7d1ce1).
+See [CREDITS.md](CREDITS.md) and the upstream licenses.
 
 ## Documentation
 
-- [Documentation Index](docs/README.md)
-- [Target Profile](docs/TARGET.md)
-- [Project Structure](docs/PROJECT_STRUCTURE.md)
-- [Reproduce The Port](docs/REPRODUCE_PORT.md)
-- [Build, Install, And ADB](docs/BUILD_INSTALL_ADB.md)
+- [S928B target](docs/TARGET.md)
+- [Build and install](docs/BUILD_INSTALL_ADB.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
-- [SM-S928U1 record](docs/SM-S928U1-S928U1UES6DZF2.md)
-- [SM-S928W record](docs/SM-S928W-S928USQS6DZF2.md)
-- [SM-S928B record](docs/SM-S928B-S928BXXS6DZF2.md)
-
-## Quick Start
-
-From the repository root:
-
-```sh
-./tools/prepare-s928-dzf2.sh
-```
-
-Build the debug APK:
-
-```sh
-./tools/prepare-s928-dzf2.sh --build-apk
-```
-
-A prebuilt debug APK from this tree is:
-
-```text
-dist/RootMyGalaxy-S928-DZF2-offline-v0.3.4.apk
-```
-
-Rebuild one public payload:
-
-```sh
-make TARGET=e3q-S928USQS6DZF2 stable
-make TARGET=e3q-S928W-S928USQS6DZF2 stable
-make TARGET=e3q-S928BXXS6DZF2 stable
-```
-
-## Important Files
-
-```text
-tools/prepare-s928-dzf2.sh
-app/src/main/assets/targets-v3.json
-src/targets/e3q-S928USQS6DZF2/target.h
-src/targets/e3q-S928W-S928USQS6DZF2/target.h
-src/targets/e3q-S928BXXS6DZF2/target.h
-artifacts/e3q-S928USQS6DZF2/cve-2026-43499-app.so
-artifacts/e3q-S928W-S928USQS6DZF2/cve-2026-43499-app.so
-artifacts/e3q-S928BXXS6DZF2/cve-2026-43499-app.so
-kernelsu/ksud-e3q-S928USQS6DZF2-kdp
-kernelsu/ksud-e3q-S928BXXS6DZF2-kdp
-```
-
-## Credits
-
-Thanks to [BuSung-dev](https://github.com/BuSung-dev) for the original
-[Root My Galaxy](https://github.com/BuSung-dev/Root-My-Galaxy) project.
-
-The `SM-S928U` / `SM-S928U1` DZF2 payload, KernelSU pair, and offline
-launcher in this repository are the local port.
-
-Thanks to [RiosWesley](https://github.com/RiosWesley) for the `SM-S928B`
-DZF2 profile, payload, KernelSU pair, and hardware evidence:
-[BuSung-dev/Root-My-Galaxy-Payloads#208](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads/pull/208).
-
-Thanks to [mvfsullivan](https://github.com/mvfsullivan) for the Canadian
-`SM-S928W` bucket / `ksud` findings and hardware evidence:
-[BuSung-dev/Root-My-Galaxy-Payloads#216](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads/pull/216).
-
-This repository is an offline S24 Ultra DZF2 pack. It is not the official
-multi-device Root My Galaxy feed.
+- [Project structure](docs/PROJECT_STRUCTURE.md)
+- [Reproduce the S928B port](docs/REPRODUCE_PORT.md)
+- [Build record](docs/SM-S928B-S928BXXS6DZF2.md)
