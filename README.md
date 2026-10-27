@@ -1,8 +1,8 @@
-# Root My Galaxy Offline — SM-S928B DZF2
+# Root My Galaxy Offline — SM-S928B DZF2 / U5DZDP
 
 This offline app supports only the Samsung Galaxy S24 Ultra
-`SM-S928B` on firmware `S928BXXS6DZF2` and kernel
-`6.1.145-android14-11-33419968-abS928BXXS6DZF2`.
+`SM-S928B` on firmware `S928BXXS6DZF2` or `S928BXXU5DZDP`, with the exact
+matching `6.1.145` kernel release.
 It rejects other models, firmware, and kernel releases.
 
 The APK bundles the S928B exploit payload and matching KernelSU `ksud`. Root is

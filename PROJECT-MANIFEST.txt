@@ -1,17 +1,17 @@
-Root My Galaxy Offline — SM-S928B only
+Root My Galaxy Offline — SM-S928B DZF2 / U5DZDP
 
 applicationId: io.github.fusiondrive.RMGs928offline
-versionName: 0.3.6-s928-dzf2-offline
-versionCode: 46
-release APK: https://github.com/2Peti/Root-My-Galaxy-SM-S928B-U-W-Offline/releases/download/v0.3.6-s928-dzf2-offline/RootMyGalaxy-S928-DZF2-offline-v0.3.6.apk
-APK size: 68174285
-APK SHA-256: 9afafc3bc8e19823a46186bab1a5d635f0235ef6223f75f40e29cab20a49900e
+versionName: 0.3.7-s928-dzf2-u5dzdp-offline
+versionCode: 47
+release APK: https://github.com/2Peti/Root-My-Galaxy-SM-S928B-U-W-Offline/releases/download/v0.3.7-s928-dzf2-u5dzdp-offline/RootMyGalaxy-S928-DZF2-U5DZDP-offline-v0.3.7.apk
+APK size: 68174329
+APK SHA-256: bda4853108ac966d5fdceafaf7e08ea6b2743fe5962bc1dd1cd807353c6bcfbb
 
 Target
-  profile: e3q-S928BXXS6DZF2
+  profile: e3q-S928BXXS6DZF2 (shared payload; DZF2 / U5DZDP)
   model: SM-S928B
-  firmware: S928BXXS6DZF2
-  kernel: 6.1.145-android14-11-33419968-abS928BXXS6DZF2
+ firmware: S928BXXS6DZF2 or S928BXXU5DZDP
+ kernel: DZF2 6.1.145-android14-11-33419968-abS928BXXS6DZF2; U5DZDP 6.1.145-android14-11-33419968-abS928BXXU5DZDP
 
 Payload artifacts
   exploit: artifacts/e3q-S928BXXS6DZF2/cve-2026-43499-app.so

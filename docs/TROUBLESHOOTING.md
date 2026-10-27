@@ -1,4 +1,4 @@
-# Troubleshooting — SM-S928B DZF2
+# Troubleshooting — SM-S928B DZF2 / U5DZDP
 
 ## Device mismatch
 
@@ -6,8 +6,8 @@ The app requires all three values:
 
 ```text
 model: SM-S928B
-firmware: S928BXXS6DZF2
-kernel: 6.1.145-android14-11-33419968-abS928BXXS6DZF2
+firmware: S928BXXS6DZF2 or S928BXXU5DZDP
+kernel: the matching exact release listed in [TARGET.md](TARGET.md)
 ```
 
 A different model, firmware, or kernel release is unsupported.
