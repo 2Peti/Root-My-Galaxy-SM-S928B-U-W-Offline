@@ -28,6 +28,32 @@
     "size": 4772304,
     "sha256": "3edb768b549e5c92e9043cebdb0fffdd5b61dec42313571c3157e4078d65991b"
    }
+  },
+  {
+   "payloadId": "e3q-S928BXXU5DZDP-ksunext",
+   "displayName": "Galaxy S24 Ultra SM-S928B | U5DZDP | KernelSU Next",
+   "models": [
+    "SM-S928B"
+   ],
+   "kernelVersions": [
+    "6.1.145"
+   ],
+   "kernelReleases": [
+    "6.1.145-android14-11-33419968-abS928BXXU5DZDP"
+   ],
+   "buildTokens": [
+    "S928BXXU5DZDP"
+   ],
+   "exploit": {
+    "url": "asset://e3q-S928BXXU5DZDP-ksunext/cve-2026-43499-app.so",
+    "size": 104128,
+    "sha256": "a539a433305aa4225561f77714123fe5c50ab8ebf9361982cf3a30dcb3b95e57"
+   },
+   "kernelsu": {
+    "url": "asset://e3q-S928BXXU5DZDP-ksunext/ksud-e3q-S928BXXU5DZDP-kernelsu-next",
+    "size": 4199720,
+    "sha256": "d2bd9be09880da3922d5d43905271d9fb02a59fb4ddb5d54303f6e8ed8d2652c"
+   }
   }
  ]
 }

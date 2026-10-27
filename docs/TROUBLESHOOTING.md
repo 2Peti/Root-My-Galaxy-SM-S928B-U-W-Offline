@@ -12,6 +12,9 @@ kernel: the matching exact release listed in [TARGET.md](TARGET.md)
 
 A different model, firmware, or kernel release is unsupported.
 
+On U5DZDP, select the `KernelSU Next` profile in Advanced mode to test the
+alternate module. The original KernelSU v3.2.5 profile remains the default.
+
 ## Shizuku preparation stalls
 
 Start Shizuku, grant Root My Galaxy permission, and keep Android child-process

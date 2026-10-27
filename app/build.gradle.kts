@@ -11,8 +11,8 @@ android {
         applicationId = "io.github.fusiondrive.RMGs928offline"
         minSdk = 33
         targetSdk = 36
-        versionCode = 47
-        versionName = "0.3.7-s928-dzf2-u5dzdp-offline"
+        versionCode = 48
+        versionName = "0.3.8-s928-dzf2-u5dzdp-ksunext-offline"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {

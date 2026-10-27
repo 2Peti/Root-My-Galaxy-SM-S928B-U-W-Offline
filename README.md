@@ -5,6 +5,10 @@ This offline app supports only the Samsung Galaxy S24 Ultra
 matching `6.1.145` kernel release.
 It rejects other models, firmware, and kernel releases.
 
+The original KernelSU v3.2.5 payload remains available. U5DZDP also has an
+optional KernelSU Next profile; enable Advanced mode to select it for testing.
+This candidate has not been released yet.
+
 The APK bundles the S928B exploit payload and matching KernelSU `ksud`. Root is
 per-boot; a reboot requires another install run. Use Shizuku and grant its
 permission before starting Root My Galaxy. Keep Android child-process

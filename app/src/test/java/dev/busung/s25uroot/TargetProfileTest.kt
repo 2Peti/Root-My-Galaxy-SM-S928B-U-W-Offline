@@ -19,6 +19,25 @@ class TargetProfileTest {
         buildTokens = setOf("S928BXXS6DZF2", "S928BXXU5DZDP"),
     )
 
+    private val s928bKernelSuNext = TargetProfile(
+        profileId = "e3q-S928BXXU5DZDP-ksunext",
+        displayName = "Galaxy S24 Ultra SM-S928B | U5DZDP | KernelSU Next",
+        models = setOf("SM-S928B"),
+        kernelVersions = setOf("6.1.145"),
+        exploit = RemoteArtifact(
+            "asset://e3q-S928BXXU5DZDP-ksunext/cve-2026-43499-app.so",
+            104128,
+            "a539a433305aa4225561f77714123fe5c50ab8ebf9361982cf3a30dcb3b95e57",
+        ),
+        kernelSu = RemoteArtifact(
+            "asset://e3q-S928BXXU5DZDP-ksunext/ksud-e3q-S928BXXU5DZDP-kernelsu-next",
+            4199720,
+            "d2bd9be09880da3922d5d43905271d9fb02a59fb4ddb5d54303f6e8ed8d2652c",
+        ),
+        kernelReleases = setOf("6.1.145-android14-11-33419968-abS928BXXU5DZDP"),
+        buildTokens = setOf("S928BXXU5DZDP"),
+    )
+
     @Test
     fun matchesExactS928BDzf2() {
         assertTrue(
@@ -35,16 +54,14 @@ class TargetProfileTest {
 
     @Test
     fun matchesTestedS928BU5Dzdp() {
-        assertTrue(
-            s928b.matches(
-                snapshot(
-                    model = "SM-S928B",
-                    kernelRelease = "6.1.145-android14-11-33419968-abS928BXXU5DZDP",
-                    buildId = "BP4A.251205.006.S928BXXU5DZDP",
-                    fingerprint = "samsung/e3qxeea/e3q:16/BP4A.251205.006/S928BXXU5DZDP:user/release-keys",
-                ),
-            ),
+        val testedDevice = snapshot(
+            model = "SM-S928B",
+            kernelRelease = "6.1.145-android14-11-33419968-abS928BXXU5DZDP",
+            buildId = "BP4A.251205.006.S928BXXU5DZDP",
+            fingerprint = "samsung/e3qxeea/e3q:16/BP4A.251205.006/S928BXXU5DZDP:user/release-keys",
         )
+        assertTrue(s928b.matches(testedDevice))
+        assertTrue(s928bKernelSuNext.matches(testedDevice))
     }
 
     @Test
