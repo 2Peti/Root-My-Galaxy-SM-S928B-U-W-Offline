@@ -18,7 +18,7 @@ does not hide ordinary files. SELinux Hide starts enabled but does not filter
 ## Download and build
 
 Download the current APK from the
-[GitHub release](https://github.com/fusiondrive/Root-My-Galaxy-SM-S928B-U-W-Offline/releases/latest).
+[GitHub release](https://github.com/2Peti/Root-My-Galaxy-SM-S928B-U-W-Offline/releases/latest).
 The release page includes its SHA-256 manifest. To build locally:
 
 ```sh
